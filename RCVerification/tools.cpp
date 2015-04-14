@@ -83,3 +83,10 @@ void Sample_contribution(Vector cache_pos, Vector sample_pos, REAL* out){
 
 
 
+REAL UniformSurfaceSampler::next(Vector * out){
+	out->x = Random_Real()*gap[0] + lower[0];
+	out->y = Random_Real()*gap[1] + lower[1];
+	out->z = 0.0;
+
+	return rpdf;
+}

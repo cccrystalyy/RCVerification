@@ -196,6 +196,7 @@ class Integrand{
 
 template <class T>
 class Sampler{
+public:
 	int dimension;
 	REAL* lower;
 	REAL* upper; 
@@ -222,8 +223,29 @@ class Sampler{
 	}
 };
 
-//template <class T>
-//REAL Integration_MC(REAL* lower, REAL* upper, Integrand<T> integrand
+template <class T>
+class Integration_MC{
+	Sampler<T> *sampler;
+	Integrand<T> integrand;
+	int N;
+	REAL rN;
+
+	Integration_MC(Sampler<T> *sampler_in, Integrand<T> integrand_in, int N_in):sampler(sampler_in),integrand(integrand_in),N(N_in){
+		rN = 1.0/ (REAL)N;
+	}
+
+	REAL Run(){
+		REAL sum = 0.0;
+		T sample;
+		for(int i = 0 ; i < N; i++){
+			Real rpdf = sampler->next(&sample);
+			sum +=  rpdf * integrand(sample);
+		}
+		return sum*rN;
+	}
+};
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 
