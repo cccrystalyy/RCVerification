@@ -3,10 +3,22 @@
 #define CORE_H
 
 /////////////////////////////////////////////////////
+#define USE_FLOAT
+#ifdef USE_FLOAT
 #define REAL float
-#define PI 3.141592653589793
+#endif
+
+#ifdef USE_DOUBLE
+#define REAL double
+#endif
+
+#ifdef USE_LONG
+#define REAL long double
+#endif
+
 //#define REAL double
 //#define REAL long double
+#define PI 3.141592653589793
 /////////////////////////////////////////////////////
 
 #include <iostream>
@@ -119,13 +131,13 @@ public:
     REAL x, y, z;
 };
 
-inline float Dot(const Vector &v1, const Vector &v2) {
+inline REAL Dot(const Vector &v1, const Vector &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 
-inline float AbsDot(const Vector &v1, const Vector &v2) {
+inline REAL AbsDot(const Vector &v1, const Vector &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
     return fabsf(Dot(v1, v2));
 }
@@ -133,14 +145,19 @@ inline float AbsDot(const Vector &v1, const Vector &v2) {
 
 inline Vector Cross(const Vector &v1, const Vector &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
-    double v1x = v1.x, v1y = v1.y, v1z = v1.z;
-    double v2x = v2.x, v2y = v2.y, v2z = v2.z;
+    REAL v1x = v1.x, v1y = v1.y, v1z = v1.z;
+    REAL v2x = v2.x, v2y = v2.y, v2z = v2.z;
     return Vector((v1y * v2z) - (v1z * v2y),
                   (v1z * v2x) - (v1x * v2z),
                   (v1x * v2y) - (v1y * v2x));
 }
 
 inline Vector Normalize(const Vector &v) { return v / v.Length(); }
+
+
+inline REAL Random_Real(){
+	return static_cast <REAL> (rand()) / static_cast <REAL> (RAND_MAX);
+}
 
 
 //////////////////////////// Global Parameters ////////////////////////
