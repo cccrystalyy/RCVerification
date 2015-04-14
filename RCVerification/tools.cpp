@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "sheval.h"
+#include "tools.h"
 
 
 ////////////////////  Define BRDF Function   //////////////////////////////////////////

@@ -181,5 +181,50 @@ static Vector noraml_cache = Vector(0.0, 1.0, 0.0);
 ////////////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////// MC Integration ////////////////////////////////
+//A generalized MC Integration
+
+template <class T>
+class Integrand{
+	int dimension;
+	virtual REAL &operator()(T sample) = 0;
+
+	 Integrand(int dim)
+        : dimension(dim) {
+    }
+};
+
+template <class T>
+class Sampler{
+	int dimension;
+	REAL* lower;
+	REAL* upper; 
+	REAL* gap; 
+	//return the rpdf
+	virtual REAL next(T* out) =0;
+
+	Sampler(REAL* lower_in, REAL* upper_in, int dim)
+        : dimension(dim) {
+			lower = new REAL[dimension];
+			upper = new REAL[dimension];
+			gap = new REAL[dimension];
+			for(int i_dim = 0; i_dim < dimension; i_dim++){
+				lower[i_dim] = lower_in[i_dim];
+				upper[i_dim] = upper_in[i_dim];
+				gap[i_dim] = upper_in[i_dim]-lower_in[i_dim];
+			}
+    }
+
+	~Sampler() {
+		delete[] lower;
+		delete[] upper;
+		delete[] gap;
+	}
+};
+
+//template <class T>
+//REAL Integration_MC(REAL* lower, REAL* upper, Integrand<T> integrand
+
+/////////////////////////////////////////////////////////////////////////////
 
 #endif //CORE_H
