@@ -77,17 +77,17 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="core.h" />
-    <ClInclude Include="sheval.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="tools.h" />
+    <ClInclude Include="..\RCVerification\core.h" />
+    <ClInclude Include="..\RCVerification\sheval.h" />
+    <ClInclude Include="..\RCVerification\stdafx.h" />
+    <ClInclude Include="..\RCVerification\targetver.h" />
+    <ClInclude Include="..\RCVerification\tools.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RCVerification.cpp" />
-    <ClCompile Include="sheval.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="tools.cpp" />
+    <ClCompile Include="..\RCVerification\RCVerification.cpp" />
+    <ClCompile Include="..\RCVerification\sheval.cpp" />
+    <ClCompile Include="..\RCVerification\stdafx.cpp" />
+    <ClCompile Include="..\RCVerification\tools.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
