@@ -7,5 +7,4 @@ inline REAL GeoTerm(Vector v);
 
 void SHEvaluate(const Vector &w, int lmax, REAL *out);
 
-
 void Sample_contribution(Vector cache_pos, Vector sample_pos, REAL* out);
