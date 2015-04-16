@@ -186,12 +186,12 @@ static Vector noraml_cache = Vector(0.0, 1.0, 0.0);
 
 template <class T>
 class Integrand{
-	int dimension;
-	virtual REAL &operator()(T sample) = 0;
-
-	 Integrand(int dim)
+public:
+	//int dimension;
+	virtual REAL operator()(T sample) = 0;
+	/*Integrand(int dim)
         : dimension(dim) {
-    }
+    }*/
 };
 
 template <class T>
@@ -203,6 +203,9 @@ public:
 	REAL* gap; 
 	//return the rpdf
 	virtual REAL next(T* out) =0;
+	/*virtual REAL next(T* out){
+		return 0.0;
+	}*/
 
 	Sampler(REAL* lower_in, REAL* upper_in, int dim)
         : dimension(dim) {
@@ -225,23 +228,33 @@ public:
 
 template <class T>
 class Integration_MC{
+public:
 	Sampler<T> *sampler;
-	Integrand<T> integrand;
+	Integrand<T> *integrand;
 	int N;
 	REAL rN;
 
-	Integration_MC(Sampler<T> *sampler_in, Integrand<T> integrand_in, int N_in):sampler(sampler_in),integrand(integrand_in),N(N_in){
+	Integration_MC(Sampler<T> *sampler_in, Integrand<T> *integrand_in, int N_in):sampler(sampler_in),integrand(integrand_in),N(N_in){
 		rN = 1.0/ (REAL)N;
 	}
+
+	Integration_MC(int N_in):N(N_in){
+		rN = 1.0/ (REAL)N;
+	}
+
+	void SetSampler(Sampler<T> *sampler_in){
+		sampler = sampler_in;
+	}
+
 
 	REAL Run(){
 		REAL sum = 0.0;
 		T sample;
 		for(int i = 0 ; i < N; i++){
-			Real rpdf = sampler->next(&sample);
-			sum +=  rpdf * integrand(sample);
+			REAL rpdf = sampler->next(&sample);
+			sum +=  rpdf *  (*integrand)(sample);
 		}
-		return sum*rN;
+		return sum*this->rN;
 	}
 };
 
