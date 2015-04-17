@@ -123,6 +123,7 @@ void Sample_contribution_GradX(Vector cache_pos, Vector sample_pos, REAL* out){
 
 	for (int k =0; k < max_SH_order * max_SH_order ; k++){
 		out[k] = ylmdx[k] * geo_term * fr_term + ylm[k] * grad_geo_term * fr_term + ylm[k] * geo_term * grad_fr_term;
+		//out[k] = ylmdx[k] * geo_term * fr_term + ylm[k] * grad_geo_term * fr_term;
 	}
 
 	delete[] ylm;
