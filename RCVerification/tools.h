@@ -1,13 +1,31 @@
 #include "stdafx.h"
 #include "sheval.h"
 
+
+inline REAL Dabs(REAL a){
+	if(a > 0.0)
+		return 1.0;
+	else if(a < 0.0)
+		return -1.0;
+	else if(a = 0.0)
+		return 0.0;
+}
+
 inline REAL Compute_fr(Vector w1, Vector w2);
 
+inline REAL Compute_GradX_fr(Vector w1, Vector w2, REAL length);
+
+REAL Compute_GradX_fr_2(Vector cache_pos, Vector sample_pos);
+
 inline REAL GeoTerm(Vector v);
+
+inline REAL GradX_GeoTerm(Vector v);
 
 void SHEvaluate(const Vector &w, int lmax, REAL *out);
 
 void Sample_contribution(Vector cache_pos, Vector sample_pos, REAL* out);
+
+void Grad_contribution(Vector base_cache_pos, Vector sample_pos, REAL* out);
 
 class UniformSurfaceSampler: public Sampler<Vector>{
 public:
