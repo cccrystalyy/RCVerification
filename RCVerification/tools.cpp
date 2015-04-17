@@ -8,6 +8,23 @@ inline REAL Compute_fr(Vector w1, Vector w2){
 	return pow( Dot(wr,w2), default_roughness) * (default_roughness_f + 1.0) / (2.0 * PI);
 }
 
+
+inline REAL Compute_GradX_fr(Vector wo, Vector wr, REAL length){
+	REAL aux = (default_roughness_f + 1.0) * default_roughness_f / (2.0 * PI * length);
+	REAL aux2 = wr.x - wo.x * (wo.x * wr.x + wo.y * wr.y + wo.z * wr.z);
+	return pow(wo.x*wr.x + wo.y * wr.y + wo.z * wr.z, default_roughness_f - 1.0) * aux * aux2;
+}
+
+REAL Compute_GradX_fr_2(Vector cache_pos, Vector sample_pos){
+	Vector wo, wr;
+	wo = cache_pos - sample_pos;
+	REAL length = wo.Length();
+	wo = Normalize(wo);
+	wr = Normalize(light_pos - sample_pos);
+	wr = Vector(-wr.x, -wr.y, wr.z);
+	return Compute_GradX_fr(wo, wr, length);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -22,9 +39,19 @@ inline REAL Compute_fr(Vector w1, Vector w2){
 
 
 ////////////////////  GeoTerm   //////////////////////////////////////////
+// v= sample_pos - cache pos = sampleX- cacheX, sampleY, -cacheZ
 inline REAL GeoTerm(Vector v){
 	return - (Normalize(v).z / v.LengthSquared());
 }
+
+
+
+inline REAL GradX_GeoTerm(Vector v){
+	REAL aux =  - 3.0 * v.z * abs(v.x) * Dabs(v.x);
+	return aux/pow(v.Length(), 5);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 
