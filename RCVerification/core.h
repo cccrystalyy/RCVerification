@@ -164,11 +164,11 @@ inline REAL Random_Real(){
 
 
 static REAL delta = 0.001;
-static int max_SH_order = 10;
+static int max_SH_order = 8;
 
 // BRDF Parameters
-static int default_roughness = 10;
-static REAL default_roughness_f = 10.0;
+static int default_roughness = 5;
+static REAL default_roughness_f = 5.0;
 static REAL default_roh = 1.0;
 
 // Light Position
@@ -254,7 +254,7 @@ public:
 			REAL rpdf = sampler->next(&sample);
 			sum +=  rpdf *  (*integrand)(sample);
 		}
-		return sum*this->rN;
+		return sum /(REAL)N;
 	}
 };
 

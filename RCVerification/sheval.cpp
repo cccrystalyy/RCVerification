@@ -740,3 +740,341 @@ void SHEval10(const float fX, const float fY, const float fZ, float *pSH)
    pSH[99] = fTmpC*fC0;
    pSH[81] = fTmpC*fS0;
 }
+
+
+
+
+inline float Factorial(int m){
+	if(m < 0)
+		return 0.f;
+	if(m == 1 || m==0)
+		return 1.f;
+	
+	//return Factorial(m-1) * m ;
+	float ret = 1.f;
+	for(float  i = (float)m; i >0; i-=1.f){
+		ret =  ret * i;
+	}
+	return ret;
+}
+
+
+inline void compute_e1_e2(const Vector &r, int l, int m, float *list_e){
+	float fact_1 = Factorial(l-m);
+	float fact_2 = Factorial(l+m);
+	float aux = (float)(1+ 2 * l);
+
+	list_e[0] = sqrtf((aux * fact_1) / fact_2);
+	list_e[1] = sqrtf((aux * fact_2) / fact_1);
+}
+
+inline void compute_e3(const Vector &r, int l, int m, float *list_e){
+	list_e[2] = sqrtf(r.x * r.x + r.y * r.y);
+}
+
+inline void compute_e4(const Vector &r, int l, int m, float *list_e){
+	float aux = powf((r.x * r.x + r.y * r.y), 2) * powf(r.LengthSquared(), 2);
+
+	
+	aux = 2.f * sqrt(PI) * aux;
+	list_e[3] = 1.f / aux;
+}
+
+
+inline void compute_e5(const Vector &r, int l, int m, float *list_e){
+	float aux = 3.f * powf(r.x, 4);
+	aux = aux - r.y * r.y * (r.y * r.y + r.z * r.z);
+	list_e[4] = aux + r.x * r.x * (2.f * r.y * r.y + (2.f + (float)l) * r.z * r.z);
+}
+
+
+inline void compute_e6(const Vector &r, int l, int m, float *list_e){
+	float aux = powf ((float)m, 2) * r.y * r.y * powf(r.LengthSquared(), 2);
+	list_e[5] = aux - (1.f - (float)l) * r.z * r.z * list_e[4];
+}
+
+
+inline void compute_e7(const Vector &r, int l, int m, float *list_e){
+	list_e[6] = r.LengthSquared() + (1.f + (float)l) * r.z *r.z;
+}
+
+
+inline void compute_e8(const Vector &r, int l, int m, float *list_e){
+	float aux  = 2.f * (float)m * r.x * list_e[2] * r.LengthSquared();
+	list_e[7] = aux * fabs(r.y/sqrt(r.x * r.x + r.y * r.y));
+}
+
+inline void compute_e9(const Vector &r, int l, int m, float *list_e){
+	list_e[8] = (float)(1+l+m) * r.z;
+}
+
+inline void compute_e10(const Vector &r, int l, int m, float *list_e){
+	list_e[9] = (float)(2+l-m) * r.z * r.LengthSquared();
+}
+
+inline void compute_e11(const Vector &r, int l, int m, float *list_e){
+	list_e[10] = (float)(1+l-m) * r.z;
+}
+
+inline void compute_e12(const Vector &r, int l, int m, float *list_e){
+	list_e[11] = (float)(2+l+m) * r.z * r.LengthSquared();
+}
+
+
+inline void compute_e13(const Vector &r, int l, int m, float *list_e){
+	float aux = powf(r.x, 4) - r.x * r.x * (2.f * r.y * r.y - r.z * r.z);
+	list_e[12] = aux - r.y * r.y * (3.f * r.y * r.y + (2.f + (float)l) * r.z * r.z);
+}
+
+
+inline void compute_e14(const Vector &r, int l, int m, float *list_e){
+	float aux = (float)(m*m) * r.x * r.x * r.LengthSquared() * r.LengthSquared();
+	list_e[13] = aux + (1.f + (float)l) * r.z * r.z * list_e[12];
+}
+
+
+inline void compute_e15(const Vector &r, int l, int m, float *list_e){
+	float aux = powf(r.x, 4) + r.x * r.x * (r.z * r.z - r.y * r.y);
+	list_e[14] = aux - 2.f * r.y * r.y * (r.y * r.y + (2.f + (float)l) * r.z * r.z);
+}
+
+inline void compute_e16(Vector r, int l, int m, float *list_e){
+	list_e[15] = (float)m * (r.y * r.y - r.x * r.x) * r.LengthSquared();
+}
+
+inline void compute_e17(const Vector &r, int l, int m, float *list_e){
+	list_e[16] = 4.f * (r.x * r.x + r.y * r.y) + (3.f + (float)l) * r.z * r.z;
+}
+
+inline void compute_e18(const Vector &r, int l, int m, float *list_e){
+	list_e[17] = 3.f * (r.x * r.x + r.y * r.y) + (5.f + (float)(2*l)) * r.z * r.z;
+}	
+
+inline void compute_e19(const Vector &r, int l, int m, float *list_e){
+	float aux = (float)(m*m) * r.LengthSquared() * r.LengthSquared() + (1.f + (float)l) * r.z * r.z * list_e[16];
+	list_e[18] = r.x * fabs(r.y) * aux ;
+}
+
+inline void compute_e20(const Vector &r, int l, int m, float *list_e){
+
+	if( r.y != 0.f){
+		float aux = sqrt(2.f * PI) * sqrt(r.y * r.y * powf((r.y * r.y + r.x * r.x), 4));
+		aux = aux * r.LengthSquared() * r.LengthSquared();
+		list_e[19] = r.y / aux;
+	}
+
+	else{
+		float aux = sqrt(2.f * PI) * sqrt(powf((r.y * r.y + r.x * r.x), 4));
+		aux = aux * r.LengthSquared() * r.LengthSquared();
+		list_e[19] = 1.f / aux;
+	}
+}
+
+
+void compute_list_e(const Vector &r, int l, int m, float *list_e){
+	
+	compute_e1_e2(r,l,m,list_e);
+	compute_e3(r,l,m,list_e);
+	compute_e4(r,l,m,list_e);
+	compute_e5(r,l,m,list_e);
+	compute_e6(r,l,m,list_e);
+	compute_e7(r,l,m,list_e);
+	compute_e8(r,l,m,list_e);
+	compute_e9(r,l,m,list_e);
+	compute_e10(r,l,m,list_e);
+	compute_e11(r,l,m,list_e);
+	compute_e12(r,l,m,list_e);
+	compute_e13(r,l,m,list_e);
+	compute_e14(r,l,m,list_e);
+	compute_e15(r,l,m,list_e);
+	compute_e16(r,l,m,list_e);
+	compute_e17(r,l,m,list_e);
+	compute_e18(r,l,m,list_e);
+	compute_e19(r,l,m,list_e);
+	compute_e20(r,l,m,list_e);
+}
+
+
+
+void compute_list_e_lite(const Vector &r, int l, int m, float *list_e){
+	
+	compute_e1_e2(r,l,m,list_e);
+	compute_e3(r,l,m,list_e);
+}
+
+
+inline int SHIndex(int l, int m) {
+    return l*l + l + m;
+}
+
+
+
+inline float shbaisGradX(float *list_e, float *list_legendre,float costheta, float phi, Vector p, int l, int m){
+	int shTermPos = SHIndex(l,m);
+	int shTermPosmm = SHIndex(l,-m);
+	double ret = 0.f;
+
+	double fl = (double)l;
+	double fm = (double)m;
+
+	if(m == 0){
+		ret = p.z * list_legendre[shTermPos] - p.Length() * list_legendre[SHIndex(l+1,m)];
+		ret *=  p.z * p.x * sqrtf(1.f + 2.f * fl)  * (1.f + fl);
+		ret = -ret / (2.f * sqrtf(PI) * list_e[2] *  list_e[2] * p.LengthSquared());
+	}
+	else if(m > 0&& p.y < 0.f){
+		
+		float aux = (fl + 1.f ) * p.z * list_legendre[shTermPos];
+		aux += (fm-fl-1.f) * p.Length() * list_legendre[SHIndex(l+1, m)];
+		aux *=  p.x * p.z * cosf(fm * phi);
+		aux = aux / (list_e[2] * list_e[2] * p.LengthSquared());
+		float aux1 = fm * fabs(sinf(phi)) * list_legendre[shTermPos];
+
+		aux1 = aux1 * sinf(fm * phi);
+		aux1 = aux1 / list_e[2];
+		ret = (- aux - aux1) * list_e[0] / sqrtf(2.f * PI);
+	}else if(m > 0&& p.y >= 0.f){
+		float aux = (fl + 1.f ) * p.z * list_legendre[shTermPos];
+		aux += (fm-fl-1.f) * p.Length() * list_legendre[SHIndex(l+1, m)];
+		aux *=  p.x * p.z * cosf(fm * phi);
+		aux = aux / (list_e[2] * list_e[2] * p.LengthSquared());
+		float aux1 = fm * fabs(sinf(phi)) * list_legendre[shTermPos] * sinf(fm * phi);
+		aux1 = aux1 / list_e[2];
+		ret = (- aux + aux1) * list_e[0] / sqrtf(2.f * PI);
+	}else if(m < 0&& p.y < 0.f){
+		float aux = (fl + 1.f ) * p.z * list_legendre[shTermPosmm];
+		aux -= (fm + fl + 1.f) * p.Length() * list_legendre[SHIndex(l+1, -m)];
+		aux *=  p.x * p.z * sinf(fm * phi);
+		aux = aux / (list_e[2] * list_e[2] * p.LengthSquared());
+		float aux1 = fm * fabs(sinf(phi)) * list_legendre[shTermPosmm] * cosf(fm * phi);
+		aux1 = aux1 / list_e[2];
+		ret = (aux - aux1) * list_e[1] / sqrtf(2.f * PI);
+	}else if(m < 0&& p.y >= 0.f){
+		float aux = ((float)l + 1.f ) * p.z * list_legendre[shTermPosmm];
+		aux -= ((float)(m + l) + 1.f) * p.Length() * list_legendre[SHIndex(l+1, -m)];
+		aux *=  p.x * p.z * sinf((float)m * phi);
+		aux = aux / (list_e[2] * list_e[2] * p.LengthSquared());
+		float aux1 = (float)m * fabs(sinf(phi)) * list_legendre[shTermPosmm] * cosf((float)m * phi);
+		aux1 = aux1 / list_e[2];
+		ret = (aux + aux1) * list_e[1] / sqrtf(2.f * PI);
+	}
+
+	return (float)ret;
+}
+
+
+
+
+// Spherical Harmonics Local Definitions
+static void legendrep(float x, int lmax, float *out) {
+#define P(l,m) out[SHIndex(l,m)]
+    // Compute $m=0$ Legendre values using recurrence
+    P(0,0) = 1.f;
+    P(1,0) = x;
+    for (int l = 2; l <= lmax; ++l)
+    {
+        P(l, 0) = ((2*l-1)*x*P(l-1,0) - (l-1)*P(l-2,0)) / l;
+        Assert(!isnan(P(l, 0)));
+        Assert(!isinf(P(l, 0)));
+    }
+
+    // Compute $m=l$ edge using Legendre recurrence
+    float neg = -1.f;
+    float dfact = 1.f;
+    float xroot = sqrtf(max(0.f, 1.f - x*x));
+    float xpow = xroot;
+    for (int l = 1; l <= lmax; ++l) {
+        P(l, l) = neg * dfact * xpow;
+        Assert(!isnan(P(l, l)));
+        Assert(!isinf(P(l, l)));
+        neg *= -1.f;      // neg = (-1)^l
+        dfact *= 2*l + 1; // dfact = (2*l-1)!!
+        xpow *= xroot;    // xpow = powf(1.f - x*x, float(l) * 0.5f);
+    }
+
+    // Compute $m=l-1$ edge using Legendre recurrence
+    for (int l = 2; l <= lmax; ++l)
+    {
+        P(l, l-1) = x * (2*l-1) * P(l-1, l-1);
+        Assert(!isnan(P(l, l-1)));
+        Assert(!isinf(P(l, l-1)));
+    }
+
+    // Compute $m=1, \ldots, l-2$ values using Legendre recurrence
+    for (int l = 3; l <= lmax; ++l)
+        for (int m = 1; m <= l-2; ++m)
+        {
+            P(l, m) = ((2 * (l-1) + 1) * x * P(l-1,m) -
+                       (l-1+m) * P(l-2,m)) / (l - m);
+            Assert(!isnan(P(l, m)));
+            Assert(!isinf(P(l, m)));
+        }
+    #if 0
+        // wrap up with the negative m ones now
+        // P(l,-m)(x) = -1^m (l-m)!/(l+m)! P(l,m)(x)
+        for (int l = 1; l <= lmax; ++l) {
+            float fa = 1.f, fb = fact(2*l);
+            // fa = fact(l+m), fb = fact(l-m)
+            for (int m = -l; m < 0; ++m) {
+                float neg = ((-m) & 0x1) ? -1.f : 1.f;
+                P(l,m) = neg * fa/fb * P(l,-m);
+                fb /= l-m;
+                fa *= (l+m+1) > 1 ? (l+m+1) : 1.;
+            }
+        }
+    #endif
+#undef P
+}
+
+
+void legendrep_out(float x, int lmax, float *out){
+	legendrep(x,lmax, out);
+}
+
+
+
+void shbaisGrad(float *out, float costheta, float phi, Vector p, int order){
+	int shTermPos = -1;
+				
+	//We need P(l+2, m) somtime so the size of table should be order+1
+	float *list_legendre  = new float[(order + 2) * (order + 2)];
+	legendrep_out(costheta, order+1, list_legendre);
+	//compute dHdx and dHdy
+	float list_e[20];
+	for(int l = 0 ; l < order ; ++l){
+		for(int m = -l; m <= l; ++m){
+			shTermPos = SHIndex(l,m);
+						
+			compute_list_e(p,l, m, list_e);
+			float x = -shbaisGradX(list_e,list_legendre,costheta, phi, p, l, m);
+
+			if(fabs(x) > 10.f){
+				x = 0.f;
+			}
+			if(isnan(x))
+				out[shTermPos] = 0.f;
+			else
+				out[shTermPos] = x;
+						
+		}
+	}
+
+				
+	delete[] list_legendre;
+
+}
+
+
+void ShbaisGrad(float *out, Vector p, int order){
+	float costheta = p.z / p.Length();
+	float phi = 0.0;
+
+	if(p.y >= 0.0){
+		phi = acos(p.x / sqrt(p.x * p.x + p.y * p.y ));
+	}
+	else{
+		phi = 2.0 * PI - acos(p.x / sqrt(p.x * p.x + p.y * p.y ));
+	}
+
+	shbaisGrad(out, costheta, phi,  p,  order);
+}

@@ -56,10 +56,10 @@ inline REAL GradX_GeoTerm(Vector v){
 
 
 ////////////////////  SH Eval   //////////////////////////////////////////
-void SHEvaluate(const Vector &w, int lmax, REAL *out) {
-   REAL fX = w.x;
-   REAL fY = w.y;
-   REAL fZ = w.z;
+void SHEvaluate(const Vector &w, int lmax, float *out) {
+   float fX = w.x;
+   float fY = w.y;
+   float fZ = w.z;
 
    int tmp_order;
 
@@ -100,20 +100,65 @@ void SHEvaluate(const Vector &w, int lmax, REAL *out) {
 void Sample_contribution(Vector cache_pos, Vector sample_pos, REAL* out){
 	REAL geo_term = GeoTerm(sample_pos - cache_pos);
 	REAL fr_term = Compute_fr(Normalize(cache_pos - sample_pos),  Normalize(light_pos - sample_pos));
-	SHEvaluate(Normalize(sample_pos - cache_pos), max_SH_order-1, out);
+	float *ylm = new float[max_SH_order * max_SH_order];
+	SHEvaluate(Normalize(sample_pos - cache_pos), max_SH_order-1, ylm);
 	for (int k =0; k < max_SH_order * max_SH_order ; k++){
-		out[k] = out[k] * geo_term * fr_term;
+		out[k] = ylm[k] * geo_term * fr_term;
 	}
+	delete[] ylm;
+
 }
+
+
+void Sample_contribution_GradX(Vector cache_pos, Vector sample_pos, REAL* out){
+	REAL geo_term = GeoTerm(sample_pos - cache_pos);
+	REAL grad_geo_term = GradX_GeoTerm(sample_pos - cache_pos);
+	REAL fr_term = Compute_fr(Normalize(cache_pos - sample_pos),  Normalize(light_pos - sample_pos));
+	REAL grad_fr_term = Compute_GradX_fr_2(cache_pos, sample_pos);
+	float *ylm = new float[max_SH_order * max_SH_order];
+	float *ylmdx = new float[max_SH_order * max_SH_order];
+	SHEvaluate(Normalize(sample_pos - cache_pos), max_SH_order-1, ylm);
+	ShbaisGrad(ylmdx, sample_pos - cache_pos, max_SH_order);
+
+
+	for (int k =0; k < max_SH_order * max_SH_order ; k++){
+		out[k] = ylmdx[k] * geo_term * fr_term + ylm[k] * grad_geo_term * fr_term + ylm[k] * geo_term * grad_fr_term;
+	}
+
+	delete[] ylm;
+	delete[] ylmdx;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
+
+
+//
+//
+//REAL UniformSurfaceSampler::next(Vector * out){
+//	out->x = Random_Real()*gap[0] + lower[0];
+//	out->y = Random_Real()*gap[1] + lower[1];
+//	out->z = 0.0;
+//
+//	return rpdf;
+//}
+
+
 
 
 
 
 REAL UniformSurfaceSampler::next(Vector * out){
-	out->x = Random_Real()*gap[0] + lower[0];
-	out->y = Random_Real()*gap[1] + lower[1];
-	out->z = 0.0;
+	out->x = counterX - Random_Real() + 0.5;
+	out->y = counterY - Random_Real() + 0.5;
+	counterX = counterX - 1.0;
+	if(counterX <= lower[0]){
+		counterX = upper[0]-0.5;
+		counterY = counterY - 1.0;
+	}
+
+	if(counterY <= lower[1]){
+		counterY = upper[1]-0.5;
+	}
 
 	return rpdf;
 }
