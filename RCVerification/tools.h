@@ -27,7 +27,9 @@ void Sample_contribution(Vector cache_pos, Vector sample_pos, REAL* out);
 
 void Sample_contribution_GradX(Vector cache_pos, Vector sample_pos, REAL* out);
 
-void Grad_contribution(Vector base_cache_pos, Vector sample_pos, REAL* out);
+void Sample_contribution_GradX_FD(Vector cache_pos, Vector sample_pos, REAL* out);
+
+//void Grad_contribution(Vector base_cache_pos, Vector sample_pos, REAL* out);
 
 class UniformSurfaceSampler: public Sampler<Vector>{
 public:
@@ -95,7 +97,7 @@ public:
 
 	REAL operator()(Vector sample){
 		REAL *out = new REAL[max_SH_order*max_SH_order];
-		Sample_contribution_GradX(cache_pos, sample, out);
+		Sample_contribution_GradX_FD(cache_pos, sample, out);
 		REAL ret= out[sh_index];
 		delete[] out;
 		return ret;

@@ -130,6 +130,43 @@ void Sample_contribution_GradX(Vector cache_pos, Vector sample_pos, REAL* out){
 	delete[] ylmdx;
 }
 
+
+void Sample_contribution_GradX_FD(Vector cache_pos, Vector sample_pos, REAL* out){
+	Vector cache_pos_plus = cache_pos +  Vector(1.0, 0.0, 0.0) * delta;
+	Vector cache_pos_minor = cache_pos -  Vector(1.0, 0.0, 0.0) * delta;
+
+
+
+	REAL geo_term = GeoTerm(sample_pos - cache_pos);
+	REAL geo_term_plus = GeoTerm(sample_pos - cache_pos_plus);
+	REAL geo_term_minor = GeoTerm(sample_pos - cache_pos_minor);
+	REAL grad_geo_term = (geo_term_plus - geo_term_minor) / (2.0 * delta) ;
+	
+	REAL fr_term = Compute_fr(Normalize(cache_pos - sample_pos),  Normalize(light_pos - sample_pos));
+	REAL fr_term_plus = Compute_fr(Normalize(cache_pos_plus - sample_pos),  Normalize(light_pos - sample_pos));
+	REAL fr_term_minor = Compute_fr(Normalize(cache_pos_minor - sample_pos),  Normalize(light_pos - sample_pos));
+	REAL grad_fr_term = (fr_term_plus -fr_term_minor) / (2.0 * delta) ;
+	
+	float *ylm = new float[max_SH_order * max_SH_order];
+	float *ylm_plus = new float[max_SH_order * max_SH_order];
+	float *ylm_minor = new float[max_SH_order * max_SH_order];
+	SHEvaluate(Normalize(sample_pos - cache_pos), max_SH_order-1, ylm);
+	SHEvaluate(Normalize(sample_pos - cache_pos_plus), max_SH_order-1, ylm_plus);
+	SHEvaluate(Normalize(sample_pos - cache_pos_minor), max_SH_order-1, ylm_minor);
+	float dlym;
+
+	for (int k =0; k < max_SH_order * max_SH_order ; k++){
+		dlym =  (ylm_plus[k] - ylm_minor[k])/(2.0 * delta);
+		out[k] = dlym * geo_term * fr_term + ylm[k] * grad_geo_term * fr_term + ylm[k] * geo_term * grad_fr_term;
+
+		//out[k] = (ylm_plus[k] * geo_term_plus * fr_term_plus -ylm_minor[k] * geo_term_minor * fr_term_minor)/(2.0 * delta );
+	}
+
+	delete[] ylm;
+	delete[] ylm_minor;
+	delete[] ylm_plus;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 
