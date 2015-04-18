@@ -36,13 +36,15 @@ public:
 	REAL rpdf;
 	REAL next(Vector * out);
 	REAL counterX, counterY;
+	REAL grid;
 
 
 	UniformSurfaceSampler(REAL* lower_in, REAL* upper_in):Sampler(lower_in, upper_in, 2){
-		srand (time(NULL));
+		//srand (time(NULL));
+		grid = 0.1;
 		rpdf = gap[0]*gap[1];
-		counterX = gap[0]-0.5;
-		counterY = gap[1]-0.5;
+		counterX = upper[0]-grid * 0.5;
+		counterY = upper[1]-grid * 0.5;
 	}
 };
 
@@ -57,9 +59,13 @@ public:
 	}
 
 	REAL operator()(Vector sample){
-		return constant;
+		return sample.x;
 	}
 
+
+	REAL call(Vector sample){
+		return sample.x;
+	}
 };
 
 
@@ -81,6 +87,14 @@ public:
 		return ret;
 	}
 
+
+	REAL call(Vector sample){
+		REAL *out = new REAL[max_SH_order*max_SH_order];
+		Sample_contribution(cache_pos, sample, out);
+		REAL ret= out[l*l + l +m];
+		delete[] out;
+		return ret;
+	}
 };
 
 
@@ -97,10 +111,17 @@ public:
 
 	REAL operator()(Vector sample){
 		REAL *out = new REAL[max_SH_order*max_SH_order];
-		Sample_contribution_GradX_FD(cache_pos, sample, out);
+		Sample_contribution_GradX(cache_pos, sample, out);
 		REAL ret= out[sh_index];
 		delete[] out;
 		return ret;
 	}
 
+	REAL call(Vector sample){
+		REAL *out = new REAL[max_SH_order*max_SH_order];
+		Sample_contribution_GradX(cache_pos, sample, out);
+		REAL ret= out[sh_index];
+		delete[] out;
+		return ret;
+	}
 };

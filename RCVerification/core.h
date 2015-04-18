@@ -163,8 +163,8 @@ inline REAL Random_Real(){
 //////////////////////////// Global Parameters ////////////////////////
 
 
-static REAL delta = 0.001;
-static int max_SH_order = 8;
+static REAL delta = 0.01;
+static int max_SH_order = 6;
 
 // BRDF Parameters
 static int default_roughness = 5;
@@ -189,6 +189,7 @@ class Integrand{
 public:
 	//int dimension;
 	virtual REAL operator()(T sample) = 0;
+	virtual REAL call(T sample) =0;
 	/*Integrand(int dim)
         : dimension(dim) {
     }*/
@@ -252,7 +253,7 @@ public:
 		T sample;
 		for(int i = 0 ; i < N; i++){
 			REAL rpdf = sampler->next(&sample);
-			sum +=  rpdf *  (*integrand)(sample);
+			sum +=  rpdf * integrand->call(sample);
 		}
 		return sum /(REAL)N;
 	}

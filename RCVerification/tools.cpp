@@ -28,16 +28,6 @@ REAL Compute_GradX_fr_2(Vector cache_pos, Vector sample_pos){
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////  Light   //////////////////////////////////////////
-//inline Vector Sample_light(Vector pos_x){
-//	return Normalize(light_pos - pos_x);
-//}
-
-////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 ////////////////////  GeoTerm   //////////////////////////////////////////
 // v= sample_pos - cache pos = sampleX- cacheX, sampleY, -cacheZ
 inline REAL GeoTerm(Vector v){
@@ -186,16 +176,17 @@ void Sample_contribution_GradX_FD(Vector cache_pos, Vector sample_pos, REAL* out
 
 
 REAL UniformSurfaceSampler::next(Vector * out){
-	out->x = counterX - Random_Real() + 0.5;
-	out->y = counterY - Random_Real() + 0.5;
-	counterX = counterX - 1.0;
+
+	out->x = counterX - (Random_Real() - 0.5) * grid ;
+	out->y = counterY - (Random_Real() - 0.5) * grid;
+	counterX = counterX - grid;
 	if(counterX <= lower[0]){
-		counterX = upper[0]-0.5;
-		counterY = counterY - 1.0;
+		counterX = upper[0]-0.5 * grid;
+		counterY = counterY - grid;
 	}
 
 	if(counterY <= lower[1]){
-		counterY = upper[1]-0.5;
+		counterY = upper[1]-0.5 * grid;
 	}
 
 	return rpdf;
